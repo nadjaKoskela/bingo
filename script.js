@@ -2,18 +2,36 @@
 let level = 1;
 let score = 0;
 let fieldId;
+let fieldValue;
+let drawnNumbers = [];
+let scorecardGridArr = [];
 
 // get id for fields
 const getFieldId = e => {
   fieldId = e.target.id;
 };
 
+// get value for fields
+const getFieldValue = e => {
+  fieldValue = Number(e.target.textContent);
+};
+
+const checkNumber = function () {
+  let i = 0;
+  while (i < drawnNumbers.length) {
+    if (fieldValue === drawnNumbers[i].value) {
+      // console.log('found!');
+      showMatchCircle();
+    }
+    i++;
+  }
+  // this has an error after reloading the scorecard grid
+};
+
 // generate random numbers
 const randomNumber = () => {
   let range = level * 10;
-  console.log(range);
   let randomNumber = Math.floor(Math.random() * range + 1);
-  //   console.log(randomNumber);
   return randomNumber;
 };
 
@@ -39,11 +57,12 @@ const buildScorecardGrid = function () {
   // console.log(numFields);
   for (let field of scorecardField) {
     field.addEventListener('click', getFieldId);
+    field.addEventListener('click', getFieldValue);
+    field.addEventListener('click', checkNumber);
   }
 };
 
 const assignScorecardNumbers = function () {
-  let scorecardGridArr = [];
   for (let i = 1; i < 6; i++) {
     // this is not the best solution -> should be more dynamic
     for (let j = 1; j < 6; j++) {
@@ -61,9 +80,6 @@ const assignScorecardNumbers = function () {
       scorecardGridArr.push(scorecardGridObj);
     }
   }
-  // console.log(scorecardGridArr);
-  // don't forget to add bonus field (i = 3 / j = 3)
-  // check margin in CSS
 };
 
 // create drawnNumbers
@@ -84,12 +100,18 @@ const buildDrawnNumbersFields = function () {
 // assign numbers to drawnNumbers
 
 const assignDrawnNumbers = function () {
-  let drawnNumbers = [];
   // repeat 5 times for amount of drawn numbers -> this is not the best solution
+  let alreadyDrawnNumbers = [];
   for (let i = 1; i < 6; i++) {
     let drawnNumberObj = {};
+    let newNumber = randomNumber();
+    // avoid duplicates in drawnNumber
+    while (alreadyDrawnNumbers.includes(newNumber)) {
+      newNumber = randomNumber();
+    }
+    alreadyDrawnNumbers.push(newNumber);
     drawnNumberObj.id = 'drawnfield_' + i;
-    drawnNumberObj.value = randomNumber();
+    drawnNumberObj.value = newNumber;
     drawnNumberObj.addToFields = function () {
       document.getElementById(this.id).innerHTML = this.value;
     };
@@ -98,41 +120,23 @@ const assignDrawnNumbers = function () {
   }
 };
 
-const printFieldId = function () {
-  console.log(fieldId);
-};
-
-const randomTest = function () {
-  console.log(randomNumber());
-};
-
 document.onload = buildScorecardGrid();
 document.onload = buildDrawnNumbersFields();
 
-const show_circle = function () {
-  //   document.getElementById('match').style.visibility = 'visible';
-
-  // create element
+const showMatchCircle = function () {
   let matchCircle;
-  let newlyMatched = document.getElementById(fieldId);
+  let getField = document.getElementById(fieldId);
   matchCircle = document.createElement('span');
   matchCircle.setAttribute('class', 'match_circle');
-  matchCircle.setAttribute('id', 'circle');
-  newlyMatched.append(matchCircle);
-
-  // add element to DOM
-
-  //   document.getElementById('match').style.visibility = 'visible';
+  getField.append(matchCircle);
 };
 
-const delete_circle = function () {
-  let matchCircle;
-  matchCircle = Array.from(document.getElementsByClassName('match_circle'));
-  matchCircle.forEach(element => {
+const deleteMatchCircles = function () {
+  let matchCircles;
+  matchCircles = Array.from(document.getElementsByClassName('match_circle'));
+  matchCircles.forEach(element => {
     element.remove();
   });
 
   //getElementsByClassName creates an array that isn't an array (HTMLCollection)
 };
-
-//
