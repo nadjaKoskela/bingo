@@ -17,10 +17,16 @@ const getFieldValue = e => {
 };
 
 const checkNumber = function () {
+  // console.log('Clicked');
+  // console.log(drawnNumbers);
+  // console.log(drawnNumbers.length); // this seems to be 0 now
+  // console.log(fieldValue);
   let i = 0;
   while (i < drawnNumbers.length) {
+    // console.log(drawnNumbers[i].value);
+    // console.log(fieldValue);
     if (fieldValue === drawnNumbers[i].value) {
-      // console.log('found!');
+      console.log('found!');
       showMatchCircle();
     }
     i++;
@@ -94,6 +100,7 @@ const buildDrawnNumbersFields = function () {
     newField.setAttribute('class', 'drawnfield');
     // append parent element
     drawnNumbersFields.append(newField);
+    // testing here //
   }
 };
 
@@ -102,6 +109,7 @@ const buildDrawnNumbersFields = function () {
 const assignDrawnNumbers = function () {
   // repeat 5 times for amount of drawn numbers -> this is not the best solution
   let alreadyDrawnNumbers = [];
+  drawnNumbers = [];
   for (let i = 1; i < 6; i++) {
     let drawnNumberObj = {};
     let newNumber = randomNumber();
@@ -118,10 +126,18 @@ const assignDrawnNumbers = function () {
     drawnNumberObj.addToFields();
     drawnNumbers.push(drawnNumberObj);
   }
+  console.log(drawnNumbers.length);
+};
+
+const showNums = function () {
+  console.log(drawnNumbers);
+  console.log(drawnNumbers.length);
 };
 
 document.onload = buildScorecardGrid();
+document.onload = assignScorecardNumbers();
 document.onload = buildDrawnNumbersFields();
+document.onload = assignDrawnNumbers();
 
 const showMatchCircle = function () {
   let matchCircle;
@@ -139,4 +155,19 @@ const deleteMatchCircles = function () {
   });
 
   //getElementsByClassName creates an array that isn't an array (HTMLCollection)
+};
+
+// test functions
+
+let testArray = [];
+
+const makeArray = function () {
+  for (let i = 0; i < 5; i++) {
+    testArray.push(i);
+  }
+};
+
+const printArray = function () {
+  console.log(testArray);
+  console.log(testArray.length);
 };
