@@ -5,46 +5,143 @@ let fieldId;
 let fieldValue;
 let drawnNumbers = [];
 let scorecardGridArr = [];
+let winningPatternsInGame = [];
+
+// helper functions
 
 // get id for fields
 const getFieldId = e => {
   fieldId = e.target.id;
 };
 
-// get value for fields
+// get value for fields -> where is this used?
 const getFieldValue = e => {
   fieldValue = Number(e.target.textContent);
 };
 
-const checkNumber = function () {
-  // console.log('Clicked');
-  // console.log(drawnNumbers);
-  // console.log(drawnNumbers.length); // this seems to be 0 now
-  // console.log(fieldValue);
-  let i = 0;
-  while (i < drawnNumbers.length) {
-    // console.log(drawnNumbers[i].value);
-    // console.log(fieldValue);
-    if (fieldValue === drawnNumbers[i].value) {
-      console.log('found!');
-      showMatchCircle();
-    }
-    i++;
-  }
-  // this has an error after reloading the scorecard grid
-};
-
-// generate random numbers
-const randomNumber = () => {
+// create random number
+const randomNumber = level => {
   let range = level * 10;
   let randomNumber = Math.floor(Math.random() * range + 1);
   return randomNumber;
 };
 
-// create scorecard grid
+// reset winning patterns array
+const clearWinningPatterns = function () {
+  winningPatternsInGame.length = 0;
+  winningPatternsInGame = [
+    [
+      'scorecardfield_1-1',
+      'scorecardfield_1-2',
+      'scorecardfield_1-3',
+      'scorecardfield_1-4',
+      'scorecardfield_1-5',
+      50,
+    ],
+    [
+      'scorecardfield_2-1',
+      'scorecardfield_2-2',
+      'scorecardfield_2-3',
+      'scorecardfield_2-4',
+      'scorecardfield_2-5',
+      50,
+    ],
+    [
+      'scorecardfield_3-1',
+      'scorecardfield_3-2',
+      'scorecardfield_3-3',
+      'scorecardfield_3-4',
+      'scorecardfield_3-5',
+      75,
+    ],
+    [
+      'scorecardfield_4-1',
+      'scorecardfield_4-2',
+      'scorecardfield_4-3',
+      'scorecardfield_4-4',
+      'scorecardfield_4-5',
+      50,
+    ],
+    [
+      'scorecardfield_5-1',
+      'scorecardfield_5-2',
+      'scorecardfield_5-3',
+      'scorecardfield_5-4',
+      'scorecardfield_5-5',
+      50,
+    ],
+    [
+      'scorecardfield_1-1',
+      'scorecardfield_2-1',
+      'scorecardfield_3-1',
+      'scorecardfield_4-1',
+      'scorecardfield_5-1',
+      50,
+    ],
+    [
+      'scorecardfield_1-2',
+      'scorecardfield_2-2',
+      'scorecardfield_3-2',
+      'scorecardfield_4-2',
+      'scorecardfield_5-2',
+      50,
+    ],
+    [
+      'scorecardfield_1-3',
+      'scorecardfield_2-3',
+      'scorecardfield_3-3',
+      'scorecardfield_4-3',
+      'scorecardfield_5-3',
+      75,
+    ],
+    [
+      'scorecardfield_1-4',
+      'scorecardfield_2-4',
+      'scorecardfield_3-4',
+      'scorecardfield_4-4',
+      'scorecardfield_5-4',
+      50,
+    ],
+    [
+      'scorecardfield_1-5',
+      'scorecardfield_2-5',
+      'scorecardfield_3-5',
+      'scorecardfield_4-5',
+      'scorecardfield_5-5',
+      50,
+    ],
+    [
+      'scorecardfield_1-1',
+      'scorecardfield_2-2',
+      'scorecardfield_3-3',
+      'scorecardfield_4-4',
+      'scorecardfield_5-5',
+      75,
+    ],
+    [
+      'scorecardfield_5-1',
+      'scorecardfield_4-2',
+      'scorecardfield_3-3',
+      'scorecardfield_2-4',
+      'scorecardfield_1-5',
+      75,
+    ],
+  ];
+};
+
+// const equalizeArrays = function () {
+//   for (let i = 0; i < winningPatterns.length; i++) {
+//     winningPatternsInGame.length = 0;
+//     winningPatternsInGame.push(winningPatterns[i]);
+//   }
+// };
+
+// building game interface
+// building scorecard grid
 const buildScorecardGrid = function () {
   // gradually add fields to div with id numgrid
   let numgrid = document.getElementById('scorecardgrid'); // get div into code
+  numgrid.innerHTML = '';
   for (let i = 1; i < 6; i++) {
     let newRow;
     newRow = document.createElement('div');
@@ -60,22 +157,22 @@ const buildScorecardGrid = function () {
     }
   }
   const scorecardField = document.getElementsByClassName('scorecardfield');
-  // console.log(numFields);
   for (let field of scorecardField) {
+    // assign events to every field
     field.addEventListener('click', getFieldId);
     field.addEventListener('click', getFieldValue);
     field.addEventListener('click', checkNumber);
   }
 };
 
-const assignScorecardNumbers = function () {
+const assignScorecardNumbers = function (level) {
   for (let i = 1; i < 6; i++) {
     // this is not the best solution -> should be more dynamic
     for (let j = 1; j < 6; j++) {
       // create object
       let scorecardGridObj = {};
       scorecardGridObj.id = 'scorecardfield_' + i + '-' + j;
-      scorecardGridObj.value = randomNumber();
+      scorecardGridObj.value = randomNumber(level);
       scorecardGridObj.matched = false;
       // assign value to grid
       scorecardGridObj.addToGrid = function () {
@@ -88,9 +185,10 @@ const assignScorecardNumbers = function () {
   }
 };
 
-// create drawnNumbers
+// build grid with drawn numbers
 const buildDrawnNumbersFields = function () {
   let drawnNumbersFields = document.getElementById('drawnNumbers');
+  drawnNumbersFields.innerHTML = '';
   for (let i = 1; i < 6; i++) {
     let newField;
     //create element
@@ -105,17 +203,16 @@ const buildDrawnNumbersFields = function () {
 };
 
 // assign numbers to drawnNumbers
-
-const assignDrawnNumbers = function () {
+const assignDrawnNumbers = function (level) {
   // repeat 5 times for amount of drawn numbers -> this is not the best solution
   let alreadyDrawnNumbers = [];
   drawnNumbers = [];
   for (let i = 1; i < 6; i++) {
     let drawnNumberObj = {};
-    let newNumber = randomNumber();
+    let newNumber = randomNumber(level);
     // avoid duplicates in drawnNumber
     while (alreadyDrawnNumbers.includes(newNumber)) {
-      newNumber = randomNumber();
+      newNumber = randomNumber(level);
     }
     alreadyDrawnNumbers.push(newNumber);
     drawnNumberObj.id = 'drawnfield_' + i;
@@ -129,15 +226,54 @@ const assignDrawnNumbers = function () {
   console.log(drawnNumbers.length);
 };
 
-const showNums = function () {
-  console.log(drawnNumbers);
-  console.log(drawnNumbers.length);
+// checking results
+
+const checkNumber = function () {
+  console.log(fieldValue);
+  let i = 0;
+  while (i < drawnNumbers.length) {
+    if (fieldValue === drawnNumbers[i].value) {
+      console.log('found!');
+      showMatchCircle();
+      updateMatchPatterns(fieldId);
+      checkMatchPatterns();
+    }
+    i++;
+  }
 };
 
+// add new numbers
+
+const drawNewNumbers = function () {
+  buildDrawnNumbersFields();
+  assignDrawnNumbers(level);
+  score -= 10;
+};
+
+// new game
+
+const newGame = function () {
+  clearWinningPatterns();
+  // console.log(winningPatterns);
+  console.log(winningPatternsInGame);
+  // winningPatternsInGame = winningPatterns;
+  // equalizeArrays();
+  score = 0;
+  level = 1;
+  buildScorecardGrid();
+  assignScorecardNumbers(1);
+  buildDrawnNumbersFields();
+  assignDrawnNumbers(1);
+  console.log(winningPatternsInGame);
+};
+
+const nextLevel = function (level) {};
+
+document.onload = clearWinningPatterns();
 document.onload = buildScorecardGrid();
-document.onload = assignScorecardNumbers();
+document.onload = assignScorecardNumbers(1);
 document.onload = buildDrawnNumbersFields();
-document.onload = assignDrawnNumbers();
+document.onload = assignDrawnNumbers(1);
 
 const showMatchCircle = function () {
   let matchCircle;
@@ -157,17 +293,27 @@ const deleteMatchCircles = function () {
   //getElementsByClassName creates an array that isn't an array (HTMLCollection)
 };
 
-// test functions
+// add everything down here :)
 
-let testArray = [];
-
-const makeArray = function () {
-  for (let i = 0; i < 5; i++) {
-    testArray.push(i);
+// update match pattern
+const updateMatchPatterns = function (matchedField) {
+  //loop through
+  for (let i = 0; i < winningPatternsInGame.length; i++) {
+    if (winningPatternsInGame[i].indexOf(matchedField) != -1) {
+      winningPatternsInGame[i].splice(
+        winningPatternsInGame[i].indexOf(matchedField),
+        1
+      );
+    }
   }
 };
 
-const printArray = function () {
-  console.log(testArray);
-  console.log(testArray.length);
+const checkMatchPatterns = function () {
+  for (let i = 0; i < winningPatternsInGame.length; i++) {
+    if (winningPatternsInGame[i].length === 1) {
+      // gameWon();
+      console.log('You won!');
+      break;
+    }
+  }
 };
