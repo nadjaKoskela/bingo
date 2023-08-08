@@ -129,13 +129,6 @@ const clearWinningPatterns = function () {
   ];
 };
 
-// const equalizeArrays = function () {
-//   for (let i = 0; i < winningPatterns.length; i++) {
-//     winningPatternsInGame.length = 0;
-//     winningPatternsInGame.push(winningPatterns[i]);
-//   }
-// };
-
 // building game interface
 // building scorecard grid
 const buildScorecardGrid = function () {
@@ -229,7 +222,6 @@ const assignDrawnNumbers = function (level) {
 // checking results
 
 const checkNumber = function () {
-  console.log(fieldValue);
   let i = 0;
   while (i < drawnNumbers.length) {
     if (fieldValue === drawnNumbers[i].value) {
@@ -243,7 +235,6 @@ const checkNumber = function () {
 };
 
 // add new numbers
-
 const drawNewNumbers = function () {
   buildDrawnNumbersFields();
   assignDrawnNumbers(level);
@@ -251,29 +242,17 @@ const drawNewNumbers = function () {
 };
 
 // new game
-
 const newGame = function () {
   clearWinningPatterns();
-  // console.log(winningPatterns);
-  console.log(winningPatternsInGame);
-  // winningPatternsInGame = winningPatterns;
-  // equalizeArrays();
   score = 0;
   level = 1;
   buildScorecardGrid();
   assignScorecardNumbers(1);
   buildDrawnNumbersFields();
   assignDrawnNumbers(1);
-  console.log(winningPatternsInGame);
 };
 
 const nextLevel = function (level) {};
-
-document.onload = clearWinningPatterns();
-document.onload = buildScorecardGrid();
-document.onload = assignScorecardNumbers(1);
-document.onload = buildDrawnNumbersFields();
-document.onload = assignDrawnNumbers(1);
 
 const showMatchCircle = function () {
   let matchCircle;
@@ -289,7 +268,6 @@ const deleteMatchCircles = function () {
   matchCircles.forEach(element => {
     element.remove();
   });
-
   //getElementsByClassName creates an array that isn't an array (HTMLCollection)
 };
 
@@ -311,9 +289,11 @@ const updateMatchPatterns = function (matchedField) {
 const checkMatchPatterns = function () {
   for (let i = 0; i < winningPatternsInGame.length; i++) {
     if (winningPatternsInGame[i].length === 1) {
-      // gameWon();
       console.log('You won!');
       break;
     }
   }
 };
+
+// start game
+document.onload = newGame();
