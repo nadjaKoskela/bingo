@@ -38,3 +38,15 @@
   top: 10%;
   left: 10%;
 }
+
+.matched_circle {
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+  background-color: transparent;
+  border: 3px solid red;
+  display: block;
+  position: absolute;
+  top: 10%;
+  left: 10%;
+}

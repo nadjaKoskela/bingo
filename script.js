@@ -1,299 +1,246 @@
 // global variables
+
 let level = 1;
 let score = 0;
-let fieldId;
-let fieldValue;
 let drawnNumbers = [];
-let scorecardGridArr = [];
-let winningPatternsInGame = [];
+let clickedID;
+let clickedValue;
+
+// winning patterns arrays
+
+const winningPatterns = [
+  [
+    'scorecard_1-1',
+    'scorecard_1-2',
+    'scorecard_1-3',
+    'scorecard_1-4',
+    'scorecard_1-5',
+    50,
+  ],
+  [
+    'scorecard_2-1',
+    'scorecard_2-2',
+    'scorecard_2-3',
+    'scorecard_2-4',
+    'scorecard_2-5',
+    50,
+  ],
+  [
+    'scorecard_3-1',
+    'scorecard_3-2',
+    'scorecard_3-3',
+    'scorecard_3-4',
+    'scorecard_3-5',
+    75,
+  ],
+  [
+    'scorecard_4-1',
+    'scorecard_4-2',
+    'scorecard_4-3',
+    'scorecard_4-4',
+    'scorecard_4-5',
+    50,
+  ],
+  [
+    'scorecard_5-1',
+    'scorecard_5-2',
+    'scorecard_5-3',
+    'scorecard_5-4',
+    'scorecard_5-5',
+    50,
+  ],
+  [
+    'scorecard_1-1',
+    'scorecard_2-1',
+    'scorecard_3-1',
+    'scorecard_4-1',
+    'scorecard_5-1',
+    50,
+  ],
+  [
+    'scorecard_1-2',
+    'scorecard_2-2',
+    'scorecard_3-2',
+    'scorecard_4-2',
+    'scorecard_5-2',
+    50,
+  ],
+  [
+    'scorecard_1-3',
+    'scorecard_2-3',
+    'scorecard_3-3',
+    'scorecard_4-3',
+    'scorecard_5-3',
+    75,
+  ],
+  [
+    'scorecard_1-4',
+    'scorecard_2-4',
+    'scorecard_3-4',
+    'scorecard_4-4',
+    'scorecard_5-4',
+    50,
+  ],
+  [
+    'scorecard_1-5',
+    'scorecard_2-5',
+    'scorecard_3-5',
+    'scorecard_4-5',
+    'scorecard_5-5',
+    50,
+  ],
+  [
+    'scorecard_1-1',
+    'scorecard_2-2',
+    'scorecard_3-3',
+    'scorecard_4-4',
+    'scorecard_5-5',
+    75,
+  ],
+  [
+    'scorecard_5-1',
+    'scorecard_4-2',
+    'scorecard_3-3',
+    'scorecard_2-4',
+    'scorecard_1-5',
+    75,
+  ],
+];
+
+let winningPatternsInGame = [...winningPatterns];
 
 // helper functions
 
-// get id for fields
-const getFieldId = e => {
-  fieldId = e.target.id;
+const randomNumber = function (level) {
+  return Math.floor(Math.random() * (level * 10) + 1);
 };
 
-// get value for fields -> where is this used?
-const getFieldValue = e => {
-  fieldValue = Number(e.target.textContent);
+const getClickedID = e => {
+  clickedID = e.target.id;
 };
 
-// create random number
-const randomNumber = level => {
-  let range = level * 10;
-  let randomNumber = Math.floor(Math.random() * range + 1);
-  return randomNumber;
+const getClickedValue = e => {
+  clickedValue = Number(e.target.textContent);
 };
 
-// reset winning patterns array
-const clearWinningPatterns = function () {
-  winningPatternsInGame.length = 0;
-  winningPatternsInGame = [
-    [
-      'scorecardfield_1-1',
-      'scorecardfield_1-2',
-      'scorecardfield_1-3',
-      'scorecardfield_1-4',
-      'scorecardfield_1-5',
-      50,
-    ],
-    [
-      'scorecardfield_2-1',
-      'scorecardfield_2-2',
-      'scorecardfield_2-3',
-      'scorecardfield_2-4',
-      'scorecardfield_2-5',
-      50,
-    ],
-    [
-      'scorecardfield_3-1',
-      'scorecardfield_3-2',
-      'scorecardfield_3-3',
-      'scorecardfield_3-4',
-      'scorecardfield_3-5',
-      75,
-    ],
-    [
-      'scorecardfield_4-1',
-      'scorecardfield_4-2',
-      'scorecardfield_4-3',
-      'scorecardfield_4-4',
-      'scorecardfield_4-5',
-      50,
-    ],
-    [
-      'scorecardfield_5-1',
-      'scorecardfield_5-2',
-      'scorecardfield_5-3',
-      'scorecardfield_5-4',
-      'scorecardfield_5-5',
-      50,
-    ],
-    [
-      'scorecardfield_1-1',
-      'scorecardfield_2-1',
-      'scorecardfield_3-1',
-      'scorecardfield_4-1',
-      'scorecardfield_5-1',
-      50,
-    ],
-    [
-      'scorecardfield_1-2',
-      'scorecardfield_2-2',
-      'scorecardfield_3-2',
-      'scorecardfield_4-2',
-      'scorecardfield_5-2',
-      50,
-    ],
-    [
-      'scorecardfield_1-3',
-      'scorecardfield_2-3',
-      'scorecardfield_3-3',
-      'scorecardfield_4-3',
-      'scorecardfield_5-3',
-      75,
-    ],
-    [
-      'scorecardfield_1-4',
-      'scorecardfield_2-4',
-      'scorecardfield_3-4',
-      'scorecardfield_4-4',
-      'scorecardfield_5-4',
-      50,
-    ],
-    [
-      'scorecardfield_1-5',
-      'scorecardfield_2-5',
-      'scorecardfield_3-5',
-      'scorecardfield_4-5',
-      'scorecardfield_5-5',
-      50,
-    ],
-    [
-      'scorecardfield_1-1',
-      'scorecardfield_2-2',
-      'scorecardfield_3-3',
-      'scorecardfield_4-4',
-      'scorecardfield_5-5',
-      75,
-    ],
-    [
-      'scorecardfield_5-1',
-      'scorecardfield_4-2',
-      'scorecardfield_3-3',
-      'scorecardfield_2-4',
-      'scorecardfield_1-5',
-      75,
-    ],
-  ];
+// UI responses
+
+const addMatchedCircle = function () {
+  let field = document.getElementById(clickedID);
+  let circle;
+  circle = document.createElement('span');
+  circle.setAttribute('class', 'matched_circle');
+  field.append(circle);
 };
 
-// building game interface
-// building scorecard grid
-const buildScorecardGrid = function () {
-  // gradually add fields to div with id numgrid
-  let numgrid = document.getElementById('scorecardgrid'); // get div into code
-  numgrid.innerHTML = '';
-  for (let i = 1; i < 6; i++) {
-    let newRow;
-    newRow = document.createElement('div');
-    newRow.setAttribute('id', `row${i}`);
-    newRow.setAttribute('class', 'numrow');
-    numgrid.append(newRow);
-    for (let j = 1; j < 6; j++) {
-      let newField;
-      newField = document.createElement('div'); // create new element
-      newField.setAttribute('id', `scorecardfield_${i}-${j}`);
-      newField.setAttribute('class', 'scorecardfield');
-      newRow.append(newField); // add new element to div
-    }
-  }
-  const scorecardField = document.getElementsByClassName('scorecardfield');
-  for (let field of scorecardField) {
-    // assign events to every field
-    field.addEventListener('click', getFieldId);
-    field.addEventListener('click', getFieldValue);
-    field.addEventListener('click', checkNumber);
-  }
-};
-
-const assignScorecardNumbers = function (level) {
-  for (let i = 1; i < 6; i++) {
-    // this is not the best solution -> should be more dynamic
-    for (let j = 1; j < 6; j++) {
-      // create object
-      let scorecardGridObj = {};
-      scorecardGridObj.id = 'scorecardfield_' + i + '-' + j;
-      scorecardGridObj.value = randomNumber(level);
-      scorecardGridObj.matched = false;
-      // assign value to grid
-      scorecardGridObj.addToGrid = function () {
-        document.getElementById(this.id).innerHTML = this.value;
-      };
-      scorecardGridObj.addToGrid();
-      // add object to array
-      scorecardGridArr.push(scorecardGridObj);
-    }
-  }
-};
-
-// build grid with drawn numbers
-const buildDrawnNumbersFields = function () {
-  let drawnNumbersFields = document.getElementById('drawnNumbers');
-  drawnNumbersFields.innerHTML = '';
-  for (let i = 1; i < 6; i++) {
-    let newField;
-    //create element
-    newField = document.createElement('div');
-    // set attributes
-    newField.setAttribute('id', `drawnfield_${i}`);
-    newField.setAttribute('class', 'drawnfield');
-    // append parent element
-    drawnNumbersFields.append(newField);
-    // testing here //
-  }
-};
-
-// assign numbers to drawnNumbers
-const assignDrawnNumbers = function (level) {
-  // repeat 5 times for amount of drawn numbers -> this is not the best solution
-  let alreadyDrawnNumbers = [];
-  drawnNumbers = [];
-  for (let i = 1; i < 6; i++) {
-    let drawnNumberObj = {};
-    let newNumber = randomNumber(level);
-    // avoid duplicates in drawnNumber
-    while (alreadyDrawnNumbers.includes(newNumber)) {
-      newNumber = randomNumber(level);
-    }
-    alreadyDrawnNumbers.push(newNumber);
-    drawnNumberObj.id = 'drawnfield_' + i;
-    drawnNumberObj.value = newNumber;
-    drawnNumberObj.addToFields = function () {
-      document.getElementById(this.id).innerHTML = this.value;
-    };
-    drawnNumberObj.addToFields();
-    drawnNumbers.push(drawnNumberObj);
-  }
-  console.log(drawnNumbers.length);
-};
-
-// checking results
-
-const checkNumber = function () {
-  let i = 0;
-  while (i < drawnNumbers.length) {
-    if (fieldValue === drawnNumbers[i].value) {
-      console.log('found!');
-      showMatchCircle();
-      updateMatchPatterns(fieldId);
-      checkMatchPatterns();
-    }
-    i++;
-  }
-};
-
-// add new numbers
-const drawNewNumbers = function () {
-  buildDrawnNumbersFields();
-  assignDrawnNumbers(level);
-  score -= 10;
-};
-
-// new game
-const newGame = function () {
-  clearWinningPatterns();
-  score = 0;
-  level = 1;
-  buildScorecardGrid();
-  assignScorecardNumbers(1);
-  buildDrawnNumbersFields();
-  assignDrawnNumbers(1);
-};
-
-const nextLevel = function (level) {};
-
-const showMatchCircle = function () {
-  let matchCircle;
-  let getField = document.getElementById(fieldId);
-  matchCircle = document.createElement('span');
-  matchCircle.setAttribute('class', 'match_circle');
-  getField.append(matchCircle);
-};
-
-const deleteMatchCircles = function () {
-  let matchCircles;
-  matchCircles = Array.from(document.getElementsByClassName('match_circle'));
-  matchCircles.forEach(element => {
-    element.remove();
-  });
-  //getElementsByClassName creates an array that isn't an array (HTMLCollection)
-};
-
-// add everything down here :)
-
-// update match pattern
-const updateMatchPatterns = function (matchedField) {
-  //loop through
+// check numbers on click
+const checkWinningPatterns = function () {
   for (let i = 0; i < winningPatternsInGame.length; i++) {
-    if (winningPatternsInGame[i].indexOf(matchedField) != -1) {
+    if (winningPatterns[i].length === 1) {
+      console.log('Won!');
+    }
+  }
+};
+
+const updateWinningPatterns = function () {
+  for (let i = 0; i < winningPatternsInGame.length; i++) {
+    if (winningPatternsInGame[i].indexOf(clickedID) != -1) {
       winningPatternsInGame[i].splice(
-        winningPatternsInGame[i].indexOf(matchedField),
+        winningPatternsInGame[i].indexOf(clickedID),
         1
       );
     }
   }
 };
 
-const checkMatchPatterns = function () {
-  for (let i = 0; i < winningPatternsInGame.length; i++) {
-    if (winningPatternsInGame[i].length === 1) {
-      console.log('You won!');
-      break;
+const checkNumber = function () {
+  if (drawnNumbers.includes(clickedValue)) {
+    addMatchedCircle();
+    updateWinningPatterns();
+    checkWinningPatterns();
+  }
+};
+
+// set up game field
+
+// set up grids
+const setUpGrid = function (gridType) {
+  let rows;
+  let idprefix;
+  let grid;
+  if (gridType === 'drawn') {
+    rows = 1;
+    idprefix = 'drawn';
+    grid = document.getElementById('drawnGrid');
+  } else if (gridType === 'scorecard') {
+    rows = 5;
+    idprefix = 'scorecard';
+    grid = document.getElementById('scorecardGrid');
+  }
+  grid.innerHTML = '';
+  for (let i = 1; i < rows + 1; i++) {
+    let newRow;
+    newRow = document.createElement('div');
+    grid.append(newRow);
+    for (let j = 1; j < 6; j++) {
+      let newField;
+      newField = document.createElement('div');
+      newField.setAttribute('id', `${idprefix}_${i}-${j}`);
+      newField.setAttribute('class', `${idprefix}field`);
+      newRow.append(newField);
+    }
+  }
+  addScorecardEvents();
+};
+
+// add numbers to fields
+const addDrawnNumbers = function () {
+  let newNumber;
+  let drawnField;
+  drawnNumbers.length = 0;
+  for (let i = 1; i < 6; i++) {
+    newNumber = randomNumber(level);
+    while (drawnNumbers.indexOf(newNumber) != -1) {
+      newNumber = randomNumber(level);
+    }
+    drawnField = document.getElementById(`drawn_1-${i}`);
+    drawnField.innerHTML = newNumber;
+    drawnNumbers.push(newNumber);
+  }
+};
+
+const addScorecardNumbers = function () {
+  let scorecardField;
+  for (let i = 1; i < 6; i++) {
+    for (let j = 1; j < 6; j++) {
+      scorecardField = document.getElementById(`scorecard_${i}-${j}`);
+      scorecardField.innerHTML = randomNumber(level);
     }
   }
 };
 
-// start game
+// add functionalities to fields
+const addScorecardEvents = function () {
+  let scorecardFields = document.getElementsByClassName('scorecardfield');
+  for (let field of scorecardFields) {
+    field.addEventListener('click', getClickedID);
+    field.addEventListener('click', getClickedValue);
+    field.addEventListener('click', checkNumber);
+  }
+};
+
+// call functions in context
+
+const drawNewNumbers = function () {
+  setUpGrid('drawn');
+  addDrawnNumbers();
+};
+
+const newGame = function () {
+  setUpGrid('drawn');
+  setUpGrid('scorecard');
+  addDrawnNumbers();
+  addScorecardNumbers();
+};
+
 document.onload = newGame();
