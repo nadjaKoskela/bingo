@@ -1,3 +1,7 @@
+// to dos
+// need to finish animation when clicked before animation is finished
+// css attributes from style.css are not assigned after removing the id
+
 // global variables
 
 let level = 1;
@@ -107,7 +111,7 @@ const winningPatterns = [
   ],
 ];
 
-let winningPatternsInGame = [...winningPatterns];
+let winningPatternsInGame = JSON.parse(JSON.stringify(winningPatterns));
 
 // helper functions
 
@@ -130,14 +134,32 @@ const addMatchedCircle = function () {
   let circle;
   circle = document.createElement('span');
   circle.setAttribute('class', 'matched_circle');
+
+  if (document.getElementById('newCircle')) {
+    document.getElementById('newCircle').removeAttribute('id');
+  }
+
+  circle.setAttribute('id', 'newCircle');
   field.append(circle);
+  animateCircles();
+};
+
+const updateScore = function () {
+  let scoreField = document.getElementById('score');
+  scoreField.textContent = score;
+};
+
+const updateLevel = function () {
+  let levelField = document.getElementById('level');
+  levelField.textContent = level;
 };
 
 // check numbers on click
 const checkWinningPatterns = function () {
   for (let i = 0; i < winningPatternsInGame.length; i++) {
-    if (winningPatterns[i].length === 1) {
-      console.log('Won!');
+    if (winningPatternsInGame[i].length === 1) {
+      changeScore(winningPatternsInGame[i][0]);
+      levelUp();
     }
   }
 };
@@ -153,12 +175,39 @@ const updateWinningPatterns = function () {
   }
 };
 
-const checkNumber = function () {
+const checkNumberOnClick = function () {
   if (drawnNumbers.includes(clickedValue)) {
     addMatchedCircle();
+    changeScore(5);
     updateWinningPatterns();
     checkWinningPatterns();
+  } else {
+    changeScore(-3);
   }
+};
+
+// score functionality
+
+const changeScore = function (scoreChange) {
+  if (scoreChange) {
+    score += scoreChange;
+  }
+  if (score < 0) {
+    score = 0;
+  }
+  setTimeout(updateScore, 500);
+};
+
+// level up
+
+const levelUp = function () {
+  level++;
+  setUpGrid('drawn');
+  setUpGrid('scorecard');
+  addDrawnNumbers();
+  addScorecardNumbers();
+  updateLevel();
+  winningPatternsInGame = JSON.parse(JSON.stringify(winningPatterns));
 };
 
 // set up game field
@@ -225,7 +274,7 @@ const addScorecardEvents = function () {
   for (let field of scorecardFields) {
     field.addEventListener('click', getClickedID);
     field.addEventListener('click', getClickedValue);
-    field.addEventListener('click', checkNumber);
+    field.addEventListener('click', checkNumberOnClick);
   }
 };
 
@@ -234,6 +283,7 @@ const addScorecardEvents = function () {
 const drawNewNumbers = function () {
   setUpGrid('drawn');
   addDrawnNumbers();
+  changeScore(-25);
 };
 
 const newGame = function () {
@@ -241,6 +291,53 @@ const newGame = function () {
   setUpGrid('scorecard');
   addDrawnNumbers();
   addScorecardNumbers();
+  level = 1;
+  score = 0;
+  updateLevel();
+  updateScore(score);
+  winningPatternsInGame = JSON.parse(JSON.stringify(winningPatterns));
+};
+
+const addEvents = function () {
+  document
+    .getElementById('drawnewnumbers')
+    .addEventListener('click', drawNewNumbers);
+  document.getElementById('newgame').addEventListener('click', newGame);
 };
 
 document.onload = newGame();
+document.onload = addEvents();
+
+// animations
+
+const animateCircles = function () {
+  let circleTransparency = 0;
+  const circleColor = getComputedStyle(
+    document.querySelector(':root')
+  ).getPropertyValue('--circle-color');
+  let circleSize = 10;
+
+  let circleTransparencyInterval = setInterval(circleTransparencyAnimation, 50);
+  let circleSizeInterval = setInterval(circleSizeAnimation, 50);
+
+  function circleTransparencyAnimation() {
+    if (circleTransparency <= 1) {
+      circleTransparency += 0.05;
+      document.getElementById('newCircle').style.borderColor =
+        circleColor.slice(0, -1) + ', ' + circleTransparency;
+    } else {
+      clearInterval(circleTransparencyInterval);
+      document.getElementById('newCircle').removeAttribute('id');
+    }
+  }
+
+  function circleSizeAnimation() {
+    if (circleSize < 80) {
+      circleSize += 5;
+      document.getElementById('newCircle').style.width = circleSize + '%';
+      document.getElementById('newCircle').style.height = circleSize + '%';
+    } else {
+      clearInterval(circleSizeInterval);
+    }
+  }
+};
