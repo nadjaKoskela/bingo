@@ -1,12 +1,9 @@
-// to dos
-// need to finish animation when clicked before animation is finished
-// css attributes from style.css are not assigned after removing the id
-
 // global variables
 
 let level = 1;
 let score = 0;
 let drawnNumbers = [];
+let circleArray = [];
 let clickedID;
 let clickedValue;
 
@@ -132,15 +129,14 @@ const getClickedValue = e => {
 const addMatchedCircle = function () {
   let field = document.getElementById(clickedID);
   let circle;
+  let animateCircleId = 'animateCircle_' + circleArray.length;
+
   circle = document.createElement('span');
   circle.setAttribute('class', 'matched_circle');
 
-  if (document.getElementById('newCircle')) {
-    document.getElementById('newCircle').removeAttribute('id');
-  }
-
-  circle.setAttribute('id', 'newCircle');
+  circle.setAttribute('id', animateCircleId);
   field.append(circle);
+  circleArray.push(animateCircleId);
   animateCircles();
 };
 
@@ -155,6 +151,7 @@ const updateLevel = function () {
 };
 
 // check numbers on click
+
 const checkWinningPatterns = function () {
   for (let i = 0; i < winningPatternsInGame.length; i++) {
     if (winningPatternsInGame[i].length === 1) {
@@ -213,6 +210,7 @@ const levelUp = function () {
 // set up game field
 
 // set up grids
+
 const setUpGrid = function (gridType) {
   let rows;
   let idprefix;
@@ -225,6 +223,7 @@ const setUpGrid = function (gridType) {
     rows = 5;
     idprefix = 'scorecard';
     grid = document.getElementById('scorecardGrid');
+    circleArray.length = 0; // this here
   }
   grid.innerHTML = '';
   for (let i = 1; i < rows + 1; i++) {
@@ -243,6 +242,7 @@ const setUpGrid = function (gridType) {
 };
 
 // add numbers to fields
+
 const addDrawnNumbers = function () {
   let newNumber;
   let drawnField;
@@ -269,6 +269,7 @@ const addScorecardNumbers = function () {
 };
 
 // add functionalities to fields
+
 const addScorecardEvents = function () {
   let scorecardFields = document.getElementsByClassName('scorecardfield');
   for (let field of scorecardFields) {
@@ -311,31 +312,33 @@ document.onload = addEvents();
 // animations
 
 const animateCircles = function () {
-  let circleTransparency = 0;
   const circleColor = getComputedStyle(
     document.querySelector(':root')
   ).getPropertyValue('--circle-color');
+
+  let animatedCircleId = circleArray.slice(-1);
+
+  let circleTransparency = 0;
   let circleSize = 10;
 
-  let circleTransparencyInterval = setInterval(circleTransparencyAnimation, 50);
-  let circleSizeInterval = setInterval(circleSizeAnimation, 50);
+  let circleTransparencyInterval = setInterval(circleTransparencyAnimation, 25);
+  let circleSizeInterval = setInterval(circleSizeAnimation, 25);
 
   function circleTransparencyAnimation() {
     if (circleTransparency <= 1) {
       circleTransparency += 0.05;
-      document.getElementById('newCircle').style.borderColor =
+      document.getElementById(animatedCircleId).style.borderColor =
         circleColor.slice(0, -1) + ', ' + circleTransparency;
     } else {
       clearInterval(circleTransparencyInterval);
-      document.getElementById('newCircle').removeAttribute('id');
     }
   }
 
   function circleSizeAnimation() {
     if (circleSize < 80) {
       circleSize += 5;
-      document.getElementById('newCircle').style.width = circleSize + '%';
-      document.getElementById('newCircle').style.height = circleSize + '%';
+      document.getElementById(animatedCircleId).style.width = circleSize + '%';
+      document.getElementById(animatedCircleId).style.height = circleSize + '%';
     } else {
       clearInterval(circleSizeInterval);
     }
